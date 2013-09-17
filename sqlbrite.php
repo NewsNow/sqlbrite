@@ -69,7 +69,7 @@ class SQLBrite {
       $this->exec($s);
       $r = $this->DB->changes();
       if($r != $expected_no_rows){
-         $this->error('SQLite query "'.$s.'" changed "'.$r.'" rows instead of "'.$expectedrows.'"');
+         $this->error('SQLite query "'.$s.'" changed "'.$r.'" rows instead of "'.$expected_no_rows.'"');
       }
    }
 
