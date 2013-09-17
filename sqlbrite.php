@@ -43,7 +43,7 @@ class SQLBrite {
 
    private $DB;
 
-   public function __construct($DB){
+   public function __construct($DB) {
       $this->DB = $DB;
    }
 
@@ -52,9 +52,11 @@ class SQLBrite {
       If $values is given, it should be an array of values
       to replace placeholders in the query. See sql().
    */
-   public function exec($sql, $values = false){
-      $s = ($values===false ? $sql : $this->sql($sql, $values));
-      if(! $this->DB->exec($s)){ $this->sqlerror($s); }
+   public function exec($sql, $values = false) {
+      $s = ($values === false ? $sql : $this->sql($sql, $values));
+      if (!$this->DB->exec($s)) {
+         $this->sqlerror($s);
+      }
    }
 
    /* exec_assert_change($sql, $values, $expected_no_rows)
@@ -64,22 +66,22 @@ class SQLBrite {
       $values should be an array of values to replace placeholders
       in the query (see sql()), or FALSE to skip the replacement.
    */
-   public function exec_assert_change($sql, $values, $expected_no_rows){
-      $s = ($values===false ? $sql : $this->sql($sql, $values));
+   public function exec_assert_change($sql, $values, $expected_no_rows) {
+      $s = ($values === false ? $sql : $this->sql($sql, $values));
       $this->exec($s);
       $r = $this->DB->changes();
-      if($r != $expected_no_rows){
-         $this->error('SQLite query "'.$s.'" changed "'.$r.'" rows instead of "'.$expected_no_rows.'"');
+      if ($r != $expected_no_rows) {
+         $this->error('SQLite query "' . $s . '" changed "' . $r . '" rows instead of "' . $expected_no_rows . '"');
       }
    }
 
    /* Automatically close the DB connection
       when the object is garbage collected.
    */
-   public function __destruct(){
+   public function __destruct() {
       $this->close();
    }
-   
+
    /* querysingle($sql [, $values ])
       Executes a query and returns a single result
       (the value of the first column), and reports any errors.
@@ -87,10 +89,12 @@ class SQLBrite {
       to replace placeholders in the query. See sql().
       Returns NULL if the query does not match any rows.
    */
-   public function querysingle($sql, $values = false){
-      $s = ($values===false ? $sql : $this->sql($sql, $values));
+   public function querysingle($sql, $values = false) {
+      $s = ($values === false ? $sql : $this->sql($sql, $values));
       $r = $this->DB->querySingle($s);
-      if($r===false){ $this->sqlerror($s); }
+      if ($r === false) {
+         $this->sqlerror($s);
+      }
       return $r;
    }
 
@@ -101,11 +105,15 @@ class SQLBrite {
       If $values is given, it should be an array of values
       to replace placeholders in the query. See sql().
    */
-   public function querysingle_strict($sql, $values = false){
-      $s = ($values===false ? $sql : $this->sql($sql, $values));
+   public function querysingle_strict($sql, $values = false) {
+      $s = ($values === false ? $sql : $this->sql($sql, $values));
       $r = $this->DB->querySingle($s);
-      if($r===false){ $this->sqlerror($s); }
-      if(is_null($r)){ $this->error('SQLite query "'.$s.'" did not match any rows (querysingle_strict'); }
+      if ($r === false) {
+         $this->sqlerror($s);
+      }
+      if (is_null($r)) {
+         $this->error('SQLite query "' . $s . '" did not match any rows (querysingle_strict');
+      }
       return $r;
    }
 
@@ -116,10 +124,12 @@ class SQLBrite {
       If $values is given, it should be an array of values
       to replace placeholders in the query. See sql().
    */
-   public function querysinglerow($sql, $values = false){
-      $s = ($values===false ? $sql : $this->sql($sql, $values));
+   public function querysinglerow($sql, $values = false) {
+      $s = ($values === false ? $sql : $this->sql($sql, $values));
       $r = $this->DB->querySingle($s, true);
-      if($r===false){ $this->sqlerror($s); }
+      if ($r === false) {
+         $this->sqlerror($s);
+      }
       return $r;
    }
 
@@ -129,13 +139,17 @@ class SQLBrite {
       If $values is given, it should be an array of values
       to replace placeholders in the query. See sql().
    */
-   public function fetchall($sql, $values = false){
-      $s = ($values===false ? $sql : $this->sql($sql, $values));
+   public function fetchall($sql, $values = false) {
+      $s = ($values === false ? $sql : $this->sql($sql, $values));
       $r = $this->DB->query($s);
-      if($r===false){ $this->sqlerror($s); }
-      if($r===true){ $this->error('SQLite query "'.$s.'" succeeded but was expected to return results.'); }
+      if ($r === false) {
+         $this->sqlerror($s);
+      }
+      if ($r === true) {
+         $this->error('SQLite query "' . $s . '" succeeded but was expected to return results.');
+      }
       $rows = array();
-      while(($e = $r->fetchArray(SQLITE3_ASSOC))!==false){
+      while (($e = $r->fetchArray(SQLITE3_ASSOC)) !== false) {
          array_push($rows, $e);
       }
       $r->finalize();
@@ -149,13 +163,19 @@ class SQLBrite {
       in the query (see sql()), or FALSE to skip replacement.
       Return FALSE from the callback to stop looping.
    */
-   public function query_callback($sql, $values, $callback){
-      $s = ($values===false ? $sql : $this->sql($sql, $values));
+   public function query_callback($sql, $values, $callback) {
+      $s = ($values === false ? $sql : $this->sql($sql, $values));
       $r = $this->DB->query($s);
-      if($r===false){ $this->sqlerror($s); }
-      if($r===true){ $this->error('SQLite query "'.$s.'" succeeded but was expected to return results.'); }
-      while(($e = $r->fetchArray(SQLITE3_ASSOC))!==false){
-         if($callback($e)===false){ break; }
+      if ($r === false) {
+         $this->sqlerror($s);
+      }
+      if ($r === true) {
+         $this->error('SQLite query "' . $s . '" succeeded but was expected to return results.');
+      }
+      while (($e = $r->fetchArray(SQLITE3_ASSOC)) !== false) {
+         if ($callback($e) === false) {
+            break;
+         }
       }
       $r->finalize();
    }
@@ -164,7 +184,7 @@ class SQLBrite {
       Closes the database connection.
       Returns TRUE on success, and FALSE on failure.
    */
-   public function close(){
+   public function close() {
       return $this->DB->close();
    }
 
@@ -173,7 +193,7 @@ class SQLBrite {
       escaped and wrapped in single quotes.
       For example:
          sql('SELECT * FROM mytable WHERE id = ?', array(12))
-         
+
       One can consider extending SQLBrite to use prepare() and statement
       objects to replace placeholders. Although PHP's documentation of
       SQLite3Stmt::bindValue() is unclear on this point, from a comment it
@@ -189,30 +209,30 @@ class SQLBrite {
       would need to be called for each different placeholder, I am unsure
       whether this solution would be faster.
    */
-   public function sql($sql, $values){
+   public function sql($sql, $values) {
       $s = '';
       $i = 0;
-      foreach(preg_split('/(\?)/', $sql, NULL, PREG_SPLIT_DELIM_CAPTURE) as $e){
-         if($e=='?'){
-            $s .= "'".$this->DB->escapeString($values[$i])."'";
+      foreach (preg_split('/(\?)/', $sql, NULL, PREG_SPLIT_DELIM_CAPTURE) as $e) {
+         if ($e == '?') {
+            $s.= "'" . $this->DB->escapeString($values[$i]) . "'";
             $i++;
-         }else{
-            $s .= $e;
+         } else {
+            $s.= $e;
          }
       }
       return $s;
    }
 
    /* Reports an error */
-   public function error($msg){
+   public function error($msg) {
       throw new Exception($msg);
    }
 
    /* Reports an error with a query,
       including the error message from the database.
    */
-   protected function sqlerror($sql){
-      $this->error('SQLite error on query "'.$sql.'": "'.$this->DB->lastErrorMsg().'"');
+   protected function sqlerror($sql) {
+      $this->error('SQLite error on query "' . $sql . '": "' . $this->DB->lastErrorMsg() . '"');
    }
 
 }
